@@ -15,6 +15,7 @@ public class shot : MonoBehaviour {
 	private float time = 0f;    //経過時間
 	public float interval = 0.3f;   //何秒おきに発砲するか
 
+
 	// Update is called once per frame
 	void Update () {
 		time += Time.deltaTime; //経過時間を加算

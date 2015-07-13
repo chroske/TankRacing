@@ -49,6 +49,7 @@
      <Compile Include="Assets\Editor\CrossPlatformInput\CrossPlatformInputInitialize.cs" />
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_eye.shader" />
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_fuku.shader" />
+     <None Include="Assets\Standard Assets\Effects\Projectors\Guidelines.txt" />
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_fuku_ds.shader" />
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_eye_blend.shader" />
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_hair_ds.shader" />
@@ -57,8 +58,10 @@
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_hair.shader" />
      <None Include="Assets\UnityChan\Stage\Shader\AlphaMask.shader" />
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_eyelash_blend.shader" />
+     <None Include="Assets\Standard Assets\Effects\Projectors\Shaders\ProjectorLight.shader" />
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_hada.shader" />
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_hada_blend.shader" />
+     <None Include="Assets\Standard Assets\Effects\Projectors\Shaders\ProjectorMultiply.shader" />
      <None Include="Assets\Standard Assets\Characters\ThirdPersonCharacter\ThirdPersonCharacterGuidelines.txt" />
      <None Include="Assets\Standard Assets\Characters\FirstPersonCharacter\FirstPersonCharacterGuidelines.txt" />
      <None Include="Assets\Standard Assets\Characters\RollerBall\RollerBallGuidelines.txt" />

@@ -7,6 +7,8 @@ Project("{EA5B029C-15E3-054C-99BB-5FA1A2F07C80}") = "GYRO-FPS", "Assembly-CSharp
 EndProject
 Project("{EA5B029C-15E3-054C-99BB-5FA1A2F07C80}") = "GYRO-FPS", "Assembly-CSharp-Editor.csproj", "{6287B59B-AFD7-8077-C16C-BC30D1CE1DBF}"
 EndProject
+Project("{EA5B029C-15E3-054C-99BB-5FA1A2F07C80}") = "GYRO-FPS", "Assembly-UnityScript.unityproj", "{AEB2FDB7-EDD1-75E1-9525-4DB0CCCCF6E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,11 +27,15 @@ Global
 		{6287B59B-AFD7-8077-C16C-BC30D1CE1DBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6287B59B-AFD7-8077-C16C-BC30D1CE1DBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6287B59B-AFD7-8077-C16C-BC30D1CE1DBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEB2FDB7-EDD1-75E1-9525-4DB0CCCCF6E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEB2FDB7-EDD1-75E1-9525-4DB0CCCCF6E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEB2FDB7-EDD1-75E1-9525-4DB0CCCCF6E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEB2FDB7-EDD1-75E1-9525-4DB0CCCCF6E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-									GlobalSection(MonoDevelopProperties) = preSolution
+											GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1

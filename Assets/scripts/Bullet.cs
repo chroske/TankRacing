@@ -5,6 +5,7 @@ public class Bullet : MonoBehaviour {
 
 	public float timer = 3;
 	public GameObject bulletHole;
+	public GameObject hitEffect;
 
 
 	// Use this for initialization
@@ -38,6 +39,13 @@ public class Bullet : MonoBehaviour {
 				//Quaternion.FromToRotation(Vector3.up, collision.contacts[0].normal)
 				)as GameObject;
 			obj.transform.Rotate(180,0,/*Random.Range(0,360)*/0);
+
+			GameObject effect = Instantiate(hitEffect ,
+			    collision.contacts[0].point + collision.contacts[0].normal*0.01f,
+                Quaternion.identity
+                ) as GameObject;		// エフェクト発生
+			Destroy(effect , 0.2f);
+
 		}
 		Destroy(gameObject);
 	}

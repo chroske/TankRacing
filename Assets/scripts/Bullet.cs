@@ -18,18 +18,19 @@ public class Bullet : MonoBehaviour {
 		Destroy(gameObject, timer);
 	}
 
-	void OnTriggerEnter (Collider col) {
-		if(col.gameObject.tag == "Enemy"){
-			col.gameObject.SendMessage("Damage");
-		}
-
-		Destroy(gameObject);
-	}
+//	void OnTriggerEnter (Collider col) {
+//		if(col.gameObject.tag == "Enemy"){
+//			col.gameObject.SendMessage("Damage");
+//		}
+//
+//		Destroy(gameObject);
+//	}
 
 	void OnCollisionEnter(Collision collision) {
 		if (collision.gameObject.tag == "Enemy") {
-			collision.gameObject.SendMessage("Damage");
+			collision.gameObject.SendMessage("Damage",2);
 		} else {
+			// 弾痕生成
 			Debug.Log(collision.contacts[0].point);
 
 			GameObject obj = Instantiate(
@@ -39,14 +40,14 @@ public class Bullet : MonoBehaviour {
 				//Quaternion.FromToRotation(Vector3.up, collision.contacts[0].normal)
 				)as GameObject;
 			obj.transform.Rotate(180,0,/*Random.Range(0,360)*/0);
-
-			GameObject effect = Instantiate(hitEffect ,
-			    collision.contacts[0].point + collision.contacts[0].normal*0.01f,
-                Quaternion.identity
-                ) as GameObject;		// エフェクト発生
-			Destroy(effect , 0.2f);
-
 		}
+
+		GameObject effect = Instantiate(hitEffect ,
+		                                collision.contacts[0].point + collision.contacts[0].normal*0.01f,
+		                                Quaternion.identity
+		                                ) as GameObject;		// エフェクト発生
+		Destroy(effect , 0.2f);
+
 		Destroy(gameObject);
 	}
 }

@@ -41,12 +41,15 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float m_NextStep;
         private bool m_Jumping;
         private AudioSource m_AudioSource;
+		private Quaternion gyro;
+
+		public int DefaultCameraPositonX;
 
         // Use this for initialization
         private void Start()
         {
             m_CharacterController = GetComponent<CharacterController>();
-            m_Camera = Camera.main;
+			m_Camera = GameObject.FindWithTag("FPSCamera").GetComponent<Camera>();/*Camera.main*/;
             m_OriginalCameraPosition = m_Camera.transform.localPosition;
             m_FovKick.Setup(m_Camera);
             m_HeadBob.Setup(m_Camera, m_StepInterval);
@@ -55,6 +58,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_Jumping = false;
             m_AudioSource = GetComponent<AudioSource>();
 			m_MouseLook.Init(transform , m_Camera.transform);
+
+			//gyro
+			if (SystemInfo.supportsGyroscope) {
+				Input.gyro.enabled = true;
+			}
         }
 
 
@@ -81,7 +89,25 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
 
             m_PreviouslyGrounded = m_CharacterController.isGrounded;
+
+//#if !UNITY_EDITOR
+			if (SystemInfo.supportsGyroscope) {
+				GyroCamera();
+			}
+//#endif
         }
+
+		private void GyroCamera(){
+			//カメラをまわす
+			gyro = Input.gyro.attitude;
+			gyro = Quaternion.Euler(DefaultCameraPositonX, 0, -90) * (new Quaternion(-gyro.x,-gyro.y, gyro.z, gyro.w));
+
+			Vector3 eulerGyro = gyro.eulerAngles;
+			m_Camera.transform.eulerAngles = (new Vector3( eulerGyro[0], 0, eulerGyro[2]));
+
+			//y回転だけ取得してキャラを回す
+			this.transform.eulerAngles = (new Vector3( 0, eulerGyro[1], eulerGyro[2]));
+		}
 
 
         private void PlayLandingSound()

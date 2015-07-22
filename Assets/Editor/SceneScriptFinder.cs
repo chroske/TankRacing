@@ -36,7 +36,7 @@ public class SceneScriptFinder : EditorWindow
 		IsRegex = EditorGUILayout.Toggle( "大文字小文字チェック", IsRegex );
 
 
-		if( GUILayout.Button(" Scan") )
+		if( GUILayout.Button("Scan") )
 			Find();
 
 		scrollPosition = GUILayout.BeginScrollView(scrollPosition);
@@ -49,70 +49,73 @@ public class SceneScriptFinder : EditorWindow
 
 	/* 文字列検索 */
 	private void Find (){
-		objList = new List<List<List<Dictionary<string,string>>>>();
-
-		//foldOutFlag format
-		foldOutFlagList = new List<bool>();
-		foldOutFlagList2 = new List<bool>();
-		
-		foreach (GameObject obj in UnityEngine.Resources.FindObjectsOfTypeAll(typeof(GameObject)))
-		{
-			// シーン上に存在するオブジェクトならば処理
-			if(obj.activeInHierarchy){
-				// アセットからパスを取得.シーン上に存在するオブジェクトの場合,シーンファイル（.unity）のパスを取得.
-				string path = AssetDatabase.GetAssetOrScenePath(obj);
-				// シーン上に存在するオブジェクトかどうか文字列で判定.
-				bool isScene = path.Contains(".unity");
-				// シーン上に存在するオブジェクトならば処理.
-				if (isScene)
-				{
-					List<List<Dictionary<string,string>>> componentList = new List<List<Dictionary<string,string>>> ();
-
-					// コンポーネント一覧を配列で取得
-					var components = obj.GetComponents<MonoBehaviour> ();
-					if (components != null) {
-						foreach(var componentData in components){
-							if(componentData != null){
-
-								// コンポーネントのテキストを取得
-								var monoscript = MonoScript.FromMonoBehaviour (componentData);
-								List<Dictionary<string,string>> lines = new List<Dictionary<string,string>> ();
-
-								// 行数カウント用
-								int lineCounter = 0;
-
-								foreach (var line in monoscript.text.Split( new string[]{ Environment.NewLine }, StringSplitOptions.None )) {
+		if(searchText != "" && searchText != null){
+			objList = new List<List<List<Dictionary<string,string>>>>();
+			
+			//foldOutFlag format
+			foldOutFlagList = new List<bool>();
+			foldOutFlagList2 = new List<bool>();
+			
+			foreach (GameObject obj in UnityEngine.Resources.FindObjectsOfTypeAll(typeof(GameObject)))
+			{
+				// シーン上に存在するオブジェクトならば処理
+				if(obj.activeInHierarchy){
+					// アセットからパスを取得.シーン上に存在するオブジェクトの場合,シーンファイル（.unity）のパスを取得.
+					string path = AssetDatabase.GetAssetOrScenePath(obj);
+					// シーン上に存在するオブジェクトかどうか文字列で判定.
+					bool isScene = path.Contains(".unity");
+					// シーン上に存在するオブジェクトならば処理.
+					if (isScene)
+					{
+						List<List<Dictionary<string,string>>> componentList = new List<List<Dictionary<string,string>>> ();
+						
+						// コンポーネント一覧を配列で取得
+						var components = obj.GetComponents<MonoBehaviour> ();
+						if (components != null) {
+							foreach(var componentData in components){
+								if(componentData != null){
 									
-									Dictionary<string,string> lineParams = new Dictionary<string,string> ();
+									// コンポーネントのテキストを取得
+									var monoscript = MonoScript.FromMonoBehaviour (componentData);
+									List<Dictionary<string,string>> lines = new List<Dictionary<string,string>> ();
 									
-									lineCounter++;
-									if (!Match (line, searchText))
-										continue;
-
-									// コンポーネント名
-									lineParams.Add ("compornent",componentData.GetType().ToString());
-
-									// オブジェクト名
-									lineParams.Add ("objectName",componentData.gameObject.ToString());
-
-									// 何行目か
-									lineParams.Add ("lineNum",lineCounter.ToString());
-
-									// ヒットした行の文字列
-									lineParams.Add ("line",line);
+									// 行数カウント用
+									int lineCounter = 0;
 									
-									lines.Add (lineParams);
+									foreach (var line in monoscript.text.Split( new string[]{ Environment.NewLine }, StringSplitOptions.None )) {
+										
+										Dictionary<string,string> lineParams = new Dictionary<string,string> ();
+										
+										lineCounter++;
+										if (!Match (line, searchText))
+											continue;
+										
+										// コンポーネント名
+										lineParams.Add ("compornent",componentData.GetType().ToString());
+										
+										// オブジェクト名
+										lineParams.Add ("objectName",componentData.gameObject.ToString());
+										
+										// 何行目か
+										lineParams.Add ("lineNum",lineCounter.ToString());
+										
+										// ヒットした行の文字列
+										lineParams.Add ("line",line);
+										
+										lines.Add (lineParams);
+									}
+									if(lines.Count != 0)
+										componentList.Add (lines);
 								}
-								if(lines.Count != 0)
-									componentList.Add (lines);
 							}
 						}
+						
+						objList.Add(componentList);
 					}
-
-					objList.Add(componentList);
 				}
 			}
 		}
+
 	}
 	
 

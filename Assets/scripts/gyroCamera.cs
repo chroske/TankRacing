@@ -4,12 +4,11 @@ using System.Collections;
 public class gyroCamera : MonoBehaviour {
 
 	private Quaternion gyro;
+	private Camera m_Camera;
 
 	// Use this for initialization
 	void Start () {
 		if (SystemInfo.supportsGyroscope) {
-			//gyro = Input.gyro;
-			//gyro.enabled = true;
 			Input.gyro.enabled = true;
 		}
 	}
@@ -27,17 +26,9 @@ public class gyroCamera : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		//デバイスの傾きを取得     
 		gyro = Input.gyro.attitude;
-		
-		//回転の向きの調整     
-		gyro.x *= -1.0f;
-		gyro.y *= -1.0f;
-
-		Quaternion qq = Quaternion.AngleAxis(-90.0f, -90.0f,0f);
-		
-		//自分の傾きとして適用
-		transform.localRotation = gyro * qq;
+		gyro = Quaternion.Euler(90, 0, -90) * (new Quaternion(-gyro.x,-gyro.y, gyro.z, gyro.w));
+		transform.localRotation = gyro;
 
 
 

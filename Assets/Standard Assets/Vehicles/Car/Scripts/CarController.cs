@@ -19,7 +19,8 @@ namespace UnityStandardAssets.Vehicles.Car
     public class CarController : MonoBehaviour
     {
         [SerializeField] private CarDriveType m_CarDriveType = CarDriveType.FourWheelDrive;
-        [SerializeField] private WheelCollider[] m_WheelColliders = new WheelCollider[4];
+        //[SerializeField] private WheelCollider[] m_WheelColliders = new WheelCollider[4];
+		[SerializeField] private WheelCollider[] m_WheelColliders = new WheelCollider[8];
         [SerializeField] private GameObject[] m_WheelMeshes = new GameObject[4];
         [SerializeField] private WheelEffects[] m_WheelEffects = new WheelEffects[4];
         [SerializeField] private Vector3 m_CentreOfMassOffset;
@@ -160,6 +161,7 @@ namespace UnityStandardAssets.Vehicles.Car
                 var hbTorque = handbrake*m_MaxHandbrakeTorque;
                 m_WheelColliders[2].brakeTorque = hbTorque;
                 m_WheelColliders[3].brakeTorque = hbTorque;
+
             }
 
 

@@ -1,8 +1,7 @@
 ﻿#pragma strict
 
 //control track's speed
-public var trackSpeed:float = 1.0;
-
+public var trackSpeed:float = 2.0;
 
 function Start () {
 	
@@ -21,7 +20,7 @@ function PlayTrackWheelsAnimation(trackDirection:int){
 	var tracks:GameObject = transform.Find("tracks").transform.gameObject;
 
 	//set track's speed
-	//tracks.GetComponent(Animation)["track_animation"].speed = trackDirection * trackSpeed;
+	tracks.GetComponent(Animation)["track_animation"].speed = trackDirection * trackSpeed;
 	tracks.GetComponent(Animation).Play();
 	
 	//find all the wheels

@@ -36,6 +36,7 @@ namespace UnityStandardAssets.Vehicles.Car
         [SerializeField] private float m_RevRangeBoundary = 1f;
         [SerializeField] private float m_SlipLimit;
         [SerializeField] private float m_BrakeTorque;
+		[SerializeField] private GameObject steerObj;
 
         private Quaternion[] m_WheelMeshLocalRotations;
         private Vector3 m_Prevpos, m_Pos;
@@ -387,5 +388,24 @@ namespace UnityStandardAssets.Vehicles.Car
 			m_WheelColliders[0].steerAngle = m_SteerAngle;
 			m_WheelColliders[1].steerAngle = m_SteerAngle;
 		}
+
+//		private void SwipeSteering(){
+//			float wheelSteerAngle = steerObj.GetComponent<SteerController>().steerAngle;
+//			float steering = Mathf.Clamp(wheelSteerAngle, -1, 1);
+//			float m_MaximumSteerAngle = 45f;
+//			
+//			float m_SteerAngle = steering*m_MaximumSteerAngle;
+//			
+//			if(wheelSteerAngle < 0){
+//				wheelRightFront.steerAngle = Mathf.Clamp(m_SteerAngle, wheelSteerAngle, 0);
+//				wheelLeftFront.steerAngle = Mathf.Clamp(m_SteerAngle, wheelSteerAngle, 0);
+//			} else if(wheelSteerAngle > 0) {
+//				wheelRightFront.steerAngle = Mathf.Clamp(m_SteerAngle, 0, wheelSteerAngle);
+//				wheelLeftFront.steerAngle = Mathf.Clamp(m_SteerAngle, 0, wheelSteerAngle);
+//			}
+//			
+//			
+//			Debug.Log("kakudo=" + wheelSteerAngle);
+//		}
     }
 }

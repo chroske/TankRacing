@@ -145,12 +145,13 @@ namespace UnityStandardAssets.Vehicles.Car
 
             //Set the steer on the front wheels.
             //Assuming that wheels 0 and 1 are the front wheels.
+			m_MaximumSteerAngle = 25f;
             m_SteerAngle = steering*m_MaximumSteerAngle;
-            m_WheelColliders[0].steerAngle = m_SteerAngle;
-            m_WheelColliders[1].steerAngle = m_SteerAngle;
+            //m_WheelColliders[0].steerAngle = m_SteerAngle;
+            //m_WheelColliders[1].steerAngle = m_SteerAngle;
 
             SteerHelper();
-            ApplyDrive(accel, footbrake);
+            //ApplyDrive(accel, footbrake);
             CapSpeed();
 
             //Set the handbrake.
@@ -364,5 +365,27 @@ namespace UnityStandardAssets.Vehicles.Car
             }
             return false;
         }
+
+		private void FixedUpdate()
+		{
+			// pass the input to the car!
+			float steering = Input.GetAxis("Horizontal");
+			float accel = Input.GetAxis("Vertical");
+			
+			
+			accel = Mathf.Clamp(accel, 0, 1);
+			
+			float thrustTorque = accel * (m_CurrentTorque / 2f);
+			m_WheelColliders[0].motorTorque = thrustTorque;
+			m_WheelColliders[1].motorTorque = thrustTorque;
+			
+			steering = Mathf.Clamp(steering, -1, 1);
+			float m_MaximumSteerAngle = 25f;
+			float m_SteerAngle = steering*m_MaximumSteerAngle;
+			
+			m_SteerAngle = steering*m_MaximumSteerAngle;
+			m_WheelColliders[0].steerAngle = m_SteerAngle;
+			m_WheelColliders[1].steerAngle = m_SteerAngle;
+		}
     }
 }

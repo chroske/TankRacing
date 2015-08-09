@@ -4,10 +4,8 @@ using UnityStandardAssets.CrossPlatformInput;
 
 public class CarDriveController : MonoBehaviour
 {
-	//[SerializeField] private CarDriveType m_CarDriveType = CarDriveType.FourWheelDrive;
 	[SerializeField] private WheelCollider[] m_WheelColliders = new WheelCollider[4];
 	[SerializeField] private GameObject[] m_WheelMeshes = new GameObject[4];
-	//[SerializeField] private WheelEffects[] m_WheelEffects = new WheelEffects[4];
 	[SerializeField] private Vector3 m_CentreOfMassOffset;
 	[SerializeField] private float m_MaximumSteerAngle;
 	[Range(0, 1)] [SerializeField] private float m_SteerHelper; // 0 is raw physics , 1 the car will grip in the direction it is facing
@@ -16,13 +14,13 @@ public class CarDriveController : MonoBehaviour
 	[SerializeField] private float m_ReverseTorque;
 	[SerializeField] private float m_MaxHandbrakeTorque;
 	[SerializeField] private float m_Downforce = 100f;
-	//[SerializeField] private SpeedType m_SpeedType;
 	[SerializeField] private float m_Topspeed = 200;
 	[SerializeField] private static int NoOfGears = 5;
 	[SerializeField] private float m_RevRangeBoundary = 1f;
 	[SerializeField] private float m_SlipLimit;
 	[SerializeField] private float m_BrakeTorque;
 	[SerializeField] private GameObject steerObj;
+	[SerializeField] private GameObject body;
 	
 	private Quaternion[] m_WheelMeshLocalRotations;
 	private Vector3 m_Prevpos, m_Pos;
@@ -41,17 +39,11 @@ public class CarDriveController : MonoBehaviour
 	public float MaxSpeed{get { return m_Topspeed; }}
 	public float Revs { get; private set; }
 	public float AccelInput { get; private set; }
-	
-	private float motor = 0;
+
 	
 	// Use this for initialization
 	private void Start()
 	{
-//		m_WheelMeshLocalRotations = new Quaternion[4];
-//		for (int i = 0; i < 4; i++)
-//		{
-//			m_WheelMeshLocalRotations[i] = m_WheelMeshes[i].transform.localRotation;
-//		}
 		m_WheelColliders[0].attachedRigidbody.centerOfMass = m_CentreOfMassOffset;
 		
 		m_MaxHandbrakeTorque = float.MaxValue;
@@ -117,27 +109,11 @@ public class CarDriveController : MonoBehaviour
 	
 	public void Move(float steering, float accel, float footbrake, float handbrake)
 	{
-//		for (int i = 0; i < 4; i++)
-//		{
-//			Quaternion quat;
-//			Vector3 position;
-//			m_WheelColliders[i].GetWorldPose(out position, out quat);
-//			m_WheelMeshes[i].transform.position = position;
-//			m_WheelMeshes[i].transform.rotation = quat;
-//		}
-		
 		//clamp input values
 		steering = Mathf.Clamp(steering, -1, 1);
 		AccelInput = accel = Mathf.Clamp(accel, 0, 1);
 		BrakeInput = footbrake = -1*Mathf.Clamp(footbrake, -1, 0);
 		handbrake = Mathf.Clamp(handbrake, 0, 1);
-		
-		//Set the steer on the front wheels.
-		//Assuming that wheels 0 and 1 are the front wheels.
-//		m_MaximumSteerAngle = 25f;
-//		m_SteerAngle = steering*m_MaximumSteerAngle;
-		//m_WheelColliders[0].steerAngle = m_SteerAngle;
-		//m_WheelColliders[1].steerAngle = m_SteerAngle;
 		
 		SteerHelper();
 		ApplyDrive(accel, footbrake);
@@ -196,27 +172,6 @@ public class CarDriveController : MonoBehaviour
 		{
 			m_WheelColliders[i].motorTorque = thrustTorque;
 		}
-//		switch (m_CarDriveType)
-//		{
-//		case CarDriveType.FourWheelDrive:
-//			thrustTorque = accel * (m_CurrentTorque / 4f);
-//			for (int i = 0; i < 4; i++)
-//			{
-//				m_WheelColliders[i].motorTorque = thrustTorque;
-//			}
-//			break;
-//			
-//		case CarDriveType.FrontWheelDrive:
-//			thrustTorque = accel * (m_CurrentTorque / 2f);
-//			m_WheelColliders[0].motorTorque = m_WheelColliders[1].motorTorque = thrustTorque;
-//			break;
-//			
-//		case CarDriveType.RearWheelDrive:
-//			thrustTorque = accel * (m_CurrentTorque / 2f);
-//			m_WheelColliders[2].motorTorque = m_WheelColliders[3].motorTorque = thrustTorque;
-//			break;
-//			
-//		}
 		
 		for (int i = 0; i < 4; i++)
 		{
@@ -257,8 +212,7 @@ public class CarDriveController : MonoBehaviour
 	// this is used to add more grip in relation to speed
 	private void AddDownForce()
 	{
-		m_WheelColliders[0].attachedRigidbody.AddForce(-transform.up*m_Downforce*
-		                                               m_WheelColliders[0].attachedRigidbody.velocity.magnitude);
+		m_WheelColliders[0].attachedRigidbody.AddForce(-transform.up*m_Downforce*m_WheelColliders[0].attachedRigidbody.velocity.magnitude);
 	}
 	
 	
@@ -275,29 +229,6 @@ public class CarDriveController : MonoBehaviour
 			WheelHit wheelHit;
 			m_WheelColliders[i].GetGroundHit(out wheelHit);
 		}
-			
-			// is the tire slipping above the given threshhold
-//			if (Mathf.Abs(wheelHit.forwardSlip) >= m_SlipLimit || Mathf.Abs(wheelHit.sidewaysSlip) >= m_SlipLimit)
-//			{
-//				m_WheelEffects[i].EmitTyreSmoke();
-//				
-//				// avoiding all four tires screeching at the same time
-//				// if they do it can lead to some strange audio artefacts
-//				if (!AnySkidSoundPlaying())
-//				{
-//					m_WheelEffects[i].PlayAudio();
-//				}
-//				continue;
-//			}
-//			
-//			// if it wasnt slipping stop all the audio
-//			if (m_WheelEffects[i].PlayingAudio)
-//			{
-//				m_WheelEffects[i].StopAudio();
-//			}
-//			// end the trail generation
-//			m_WheelEffects[i].EndSkidTrail();
-//		}
 	}
 	
 	// crude traction control that reduces the power to wheel if the car is wheel spinning too much
@@ -311,34 +242,6 @@ public class CarDriveController : MonoBehaviour
 			
 			AdjustTorque(wheelHit.forwardSlip);
 		}
-//		switch (m_CarDriveType)
-//		{
-//		case CarDriveType.FourWheelDrive:
-//			// loop through all wheels
-//			for (int i = 0; i < 4; i++)
-//			{
-//				m_WheelColliders[i].GetGroundHit(out wheelHit);
-//				
-//				AdjustTorque(wheelHit.forwardSlip);
-//			}
-//			break;
-//			
-//		case CarDriveType.RearWheelDrive:
-//			m_WheelColliders[2].GetGroundHit(out wheelHit);
-//			AdjustTorque(wheelHit.forwardSlip);
-//			
-//			m_WheelColliders[3].GetGroundHit(out wheelHit);
-//			AdjustTorque(wheelHit.forwardSlip);
-//			break;
-//			
-//		case CarDriveType.FrontWheelDrive:
-//			m_WheelColliders[0].GetGroundHit(out wheelHit);
-//			AdjustTorque(wheelHit.forwardSlip);
-//			
-//			m_WheelColliders[1].GetGroundHit(out wheelHit);
-//			AdjustTorque(wheelHit.forwardSlip);
-//			break;
-//		}
 	}
 	
 	
@@ -357,91 +260,84 @@ public class CarDriveController : MonoBehaviour
 			}
 		}
 	}
-	
-	
-//	private bool AnySkidSoundPlaying()
-//	{
-//		for (int i = 0; i < 4; i++)
-//		{
-//			if (m_WheelEffects[i].PlayingAudio)
-//			{
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-	
+
 	private void FixedUpdate()
 	{
-		// pass the input to the car!
-//		float steering = Input.GetAxis("Horizontal");
-//		float accel = Input.GetAxis("Vertical");
-//		
-//		
-//		accel = Mathf.Clamp(accel, 0, 1);
-//
-//		Move(steering, accel, accel, 0f);
-		
-//		float thrustTorque = accel * (m_CurrentTorque / 2f);
-//		m_WheelColliders[0].motorTorque = thrustTorque;
-//		m_WheelColliders[1].motorTorque = thrustTorque;
-//		m_WheelColliders[2].motorTorque = thrustTorque;
-//		m_WheelColliders[3].motorTorque = thrustTorque;
-		
-//		steering = Mathf.Clamp(steering, -1, 1);
-//		float m_MaximumSteerAngle = 25f;
-//		float m_SteerAngle = steering*m_MaximumSteerAngle;
-//		
-//		m_SteerAngle = steering*m_MaximumSteerAngle;
-//		m_WheelColliders[0].steerAngle = m_SteerAngle;
-//		m_WheelColliders[1].steerAngle = m_SteerAngle;
-
-
-
-		if ((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) || Input.GetMouseButton (0)) {
-
-			Move(1, 1, 1, 0f);
-
-			motor = 1000;
-			
-			m_WheelColliders[0].brakeTorque = 0;
-			m_WheelColliders[1].brakeTorque = 0;
-			m_WheelColliders[2].brakeTorque = 0;
-			m_WheelColliders[3].brakeTorque = 0;
-//			
-//			m_WheelColliders[0].motorTorque = motor;
-//			m_WheelColliders[1].motorTorque = motor;
-//			m_WheelColliders[2].motorTorque = motor;
-//			m_WheelColliders[3].motorTorque = motor;
-			
-			
-			
-		} else if((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended) || Input.GetMouseButtonUp (0)) {
-			m_WheelColliders[0].brakeTorque = m_BrakeTorque;
-			m_WheelColliders[1].brakeTorque = m_BrakeTorque;
-			m_WheelColliders[2].brakeTorque = m_BrakeTorque;
-			m_WheelColliders[3].brakeTorque = m_BrakeTorque;
-		}
-
 		SwipeSteering();
 	}
 	
 	private void SwipeSteering(){
+		//touch
+		if ((Input.touchCount > 0 && Input.GetTouch (0).phase == TouchPhase.Began) || Input.GetMouseButton (0)) {
+			DisplayTouchingEvent();
+		// un touch
+		} else if((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended) || !Input.GetMouseButton (0)) {
+			DisplayUnTouchingEvent();
+
+			//reset steer angle
+			ReturnDefaultSteerAngle();
+		}
+	}
+
+	private void DisplayTouchingEvent(){
 		float wheelSteerAngle = steerObj.GetComponent<SteerController>().steerAngle;
 		float steering = Mathf.Clamp(wheelSteerAngle, -1, 1);
-		float m_MaximumSteerAngle = 45f;
-		
 		float m_SteerAngle = steering*m_MaximumSteerAngle;
-		
-		if(wheelSteerAngle < 0){
-			m_WheelColliders[0].steerAngle = Mathf.Clamp(m_SteerAngle, wheelSteerAngle * 0.4f, 0);
-			m_WheelColliders[1].steerAngle = Mathf.Clamp(m_SteerAngle, wheelSteerAngle* 0.4f, 0);
-		} else if(wheelSteerAngle > 0) {
-			m_WheelColliders[0].steerAngle = Mathf.Clamp(m_SteerAngle, 0, wheelSteerAngle* 0.4f);
-			m_WheelColliders[1].steerAngle = Mathf.Clamp(m_SteerAngle, 0, wheelSteerAngle* 0.4f);
+
+		for (int i = 0; i < 4; i++)
+		{
+			m_WheelColliders[i].brakeTorque = 0;
 		}
 		
+		//drive
+		Move(1, 1, 1, 0f);
 		
-		Debug.Log("kakudo=" + wheelSteerAngle);
+		//steering
+		if (wheelSteerAngle < 0) {
+			transform.Rotate (new Vector3 (0, wheelSteerAngle, 0) * Time.deltaTime);
+			
+			m_WheelColliders[0].steerAngle = Mathf.Clamp(m_SteerAngle, wheelSteerAngle * 0.4f, 0);
+			m_WheelColliders[1].steerAngle = Mathf.Clamp(m_SteerAngle, wheelSteerAngle * 0.4f, 0);
+		} else if (wheelSteerAngle > 0) {
+			transform.Rotate (new Vector3 (0, wheelSteerAngle, 0) * Time.deltaTime);
+			
+			m_WheelColliders[0].steerAngle = Mathf.Clamp(m_SteerAngle, 0, wheelSteerAngle * 0.4f);
+			m_WheelColliders[1].steerAngle = Mathf.Clamp(m_SteerAngle, 0, wheelSteerAngle * 0.4f);
+		}
+		//ドリフト演出のためボディを見た目のみ傾ける
+		DriftRotateBody(wheelSteerAngle);
 	}
+
+	private void DisplayUnTouchingEvent(){
+		//brake
+		for (int i = 0; i < 4; i++)
+		{
+			m_WheelColliders[i].brakeTorque = m_BrakeTorque;
+		}
+		
+		ReturnDefaultBodyAngle();
+	}
+
+	private void DriftRotateBody(float wheelSteerAngle){
+		float angle = Mathf.LerpAngle (body.transform.localEulerAngles.y, wheelSteerAngle * 0.2f, Time.deltaTime*10);
+		body.transform.localEulerAngles = new Vector3 (0, angle, 0);
+	}
+
+
+	private void ReturnDefaultBodyAngle(){
+		//machin rotate reset
+		if(body.transform.localEulerAngles.y != 0){
+			float angle = Mathf.LerpAngle (body.transform.localEulerAngles.y, 0, Time.deltaTime*10);
+			body.transform.localEulerAngles = new Vector3 (0, angle, 0);
+		}
+	}
+
+	private void ReturnDefaultSteerAngle(){
+		for (int i = 0; i < 2; i++) {
+			float angle = Mathf.LerpAngle (m_WheelColliders[i].steerAngle, 0, Time.deltaTime*10);
+			m_WheelColliders[i].steerAngle = angle;
+		}
+
+	}
+
 }

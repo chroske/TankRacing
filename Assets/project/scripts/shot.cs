@@ -3,8 +3,13 @@ using System.Collections;
 
 public class shot : MonoBehaviour {
 
+	[SerializeField] private GameObject gameManager;
+	
+	private GameManager m_GameManager;
+
 	// Use this for initialization
 	void Start () {
+		m_GameManager = gameManager.GetComponent<GameManager>();
 	}
 
 	public GameObject bullet;
@@ -18,12 +23,14 @@ public class shot : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		time += Time.deltaTime; //経過時間を加算
-
-		if(Input.GetButton("Fire1")){
-			if(time >= interval){
-				Shoot();    //発砲
-				time = 0f;  //初期化
+		if(m_GameManager.battleMode == "Canon"){
+			time += Time.deltaTime; //経過時間を加算
+			
+			if(Input.GetButton("Fire1")){
+				if(time >= interval){
+					Shoot();    //発砲
+					time = 0f;  //初期化
+				}
 			}
 		}
 	}

@@ -12,8 +12,13 @@ public class RotateWheelObj : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		transform.localEulerAngles = new Vector3(0, Mathf.Floor(wheelCo.steerAngle), 90);
+		Quaternion quat;
+		Vector3 position;
+		wheelCo.GetWorldPose(out position, out quat);
 
-		//transform.Rotate(new Vector3(wheelCo.steerAngle,0f,0f));
+		transform.rotation = quat;
+		
+		//steerRotate
+		//transform.localEulerAngles = new Vector3 (0, Mathf.Floor (wheelCo.steerAngle), 0);
 	}
 }

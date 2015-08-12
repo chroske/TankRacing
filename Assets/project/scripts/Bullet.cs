@@ -31,7 +31,7 @@ public class Bullet : MonoBehaviour {
 			collision.gameObject.SendMessage("Damage",2);
 		} else {
 			// 弾痕生成
-			Debug.Log(collision.contacts[0].point);
+			//Debug.Log(collision.contacts[0].point);
 
 			GameObject obj = Instantiate(
 				bulletHole,

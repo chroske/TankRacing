@@ -34,6 +34,7 @@ public class CarDriveController : MonoBehaviour
 	private Rigidbody m_Rigidbody;
 	private const float k_ReversingThreshold = 0.01f;
 	private GameManager m_GameManager;
+	private SteerController m_SteerController;
 	
 	public bool Skidding { get; private set; }
 	public float BrakeInput { get; private set; }
@@ -49,13 +50,14 @@ public class CarDriveController : MonoBehaviour
 	private void Start()
 	{
 		m_GameManager = gameManager.GetComponent<GameManager>();
+		m_SteerController = steerObj.GetComponent<SteerController>();
 
 		m_WheelColliders[0].attachedRigidbody.centerOfMass = m_CentreOfMassOffset;
 		
 		m_MaxHandbrakeTorque = float.MaxValue;
 		
 		m_Rigidbody = GetComponent<Rigidbody>();
-		m_CurrentTorque = m_FullTorqueOverAllWheels - (m_TractionControl*m_FullTorqueOverAllWheels);
+		//m_CurrentTorque = m_FullTorqueOverAllWheels - (m_TractionControl*m_FullTorqueOverAllWheels);
 	}
 	
 	
@@ -141,7 +143,7 @@ public class CarDriveController : MonoBehaviour
 		
 		AddDownForce();
 		CheckForWheelSpin();
-		//TractionControl();
+		TractionControl();
 	}
 	
 	
@@ -288,7 +290,9 @@ public class CarDriveController : MonoBehaviour
 	}
 
 	private void DisplayTouchingEvent(){
-		float wheelSteerAngle = steerObj.GetComponent<SteerController>().steerAngle;
+		float wheelSteerAngle = m_SteerController.steerAngle;
+		float valConDistance = m_SteerController.valConDistance;
+		float maxDistance = m_SteerController.maxDistance;
 		float steering = Mathf.Clamp(wheelSteerAngle, -1, 1);
 		float m_SteerAngle = steering*m_MaximumSteerAngle;
 
@@ -296,6 +300,10 @@ public class CarDriveController : MonoBehaviour
 		{
 			m_WheelColliders[i].brakeTorque = 0;
 		}
+
+		//トルク調節
+		Debug.Log (m_CurrentTorque);
+		m_CurrentTorque = (m_FullTorqueOverAllWheels - (m_TractionControl*m_FullTorqueOverAllWheels)) * Mathf.Clamp(valConDistance,0,maxDistance) / maxDistance;
 		
 		//drive
 		Move(1, 1, 1, 0f);

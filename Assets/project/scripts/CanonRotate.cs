@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityStandardAssets.CrossPlatformInput;
 
 public class CanonRotate : MonoBehaviour {
 	
@@ -49,9 +48,9 @@ public class CanonRotate : MonoBehaviour {
 		if(Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved){
 			if (Input.GetButton ("Fire1")) {
 				if (axes == RotationAxes.MouseXAndY) {
-					float rotationX = character.transform.localEulerAngles.y + CrossPlatformInputManager.GetAxis ("Mouse X") * XSensitivity;
+					float rotationX = character.transform.localEulerAngles.y + Input.GetAxis ("Mouse X") * XSensitivity;
 					
-					rotationY += CrossPlatformInputManager.GetAxis ("Mouse Y") * YSensitivity;
+					rotationY += Input.GetAxis ("Mouse Y") * YSensitivity;
 					rotationY = Mathf.Clamp (rotationY, MinimumX, MaximumX);
 					
 					camera.transform.localEulerAngles = new Vector3 (-rotationY, 0, 0);

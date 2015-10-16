@@ -302,7 +302,6 @@ public class CarDriveController : MonoBehaviour
 		}
 
 		//トルク調節
-		Debug.Log (m_CurrentTorque);
 		m_CurrentTorque = (m_FullTorqueOverAllWheels - (m_TractionControl*m_FullTorqueOverAllWheels)) * Mathf.Clamp(valConDistance,0,maxDistance) / maxDistance;
 		
 		//drive

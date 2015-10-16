@@ -37,7 +37,6 @@ public class TestSocketIO : MonoBehaviour
 	public GameObject Car;
 	public GameObject Shadow;
 	public int player_id = 1;
-	public int player_id2 = 1;
 
 	public void Start() 
 	{
@@ -51,7 +50,7 @@ public class TestSocketIO : MonoBehaviour
 		
 		// メッセージ受信を追加
 		//socket.On ("S_to_C_message", S_to_C_message);
-		socket.On ("response"+player_id2, response_log);
+		socket.On ("response"+player_id, response_log);
 		
 		StartCoroutine("EmitRoop");
 	}
@@ -73,7 +72,12 @@ public class TestSocketIO : MonoBehaviour
 		string posY = json.GetField("position_y").str;
 		string posZ = json.GetField("position_z").str;
 
+		string rotX = json.GetField("rotate_x").str;
+		string rotY = json.GetField("rotate_y").str;
+		string rotZ = json.GetField("rotate_z").str;
+
 		Shadow.transform.position = new Vector3( float.Parse(posX), float.Parse(posY), float.Parse(posZ));
+		Shadow.transform.eulerAngles = new Vector3 (float.Parse(rotX), float.Parse(rotY), float.Parse(rotZ));
 	}
 
 	private IEnumerator EmitRoop() {
@@ -84,6 +88,11 @@ public class TestSocketIO : MonoBehaviour
 			jsonobj.AddField("position_x", Car.transform.localPosition.x.ToString());
 			jsonobj.AddField("position_y", Car.transform.localPosition.y.ToString());
 			jsonobj.AddField("position_z", Car.transform.localPosition.z.ToString());
+
+			jsonobj.AddField("rotate_x", Car.transform.eulerAngles.x.ToString());
+			jsonobj.AddField("rotate_y", Car.transform.eulerAngles.y.ToString());
+			jsonobj.AddField("rotate_z", Car.transform.eulerAngles.z.ToString());
+
 
 			socket.Emit("position"+player_id,jsonobj);
 			

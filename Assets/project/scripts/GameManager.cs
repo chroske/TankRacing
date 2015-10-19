@@ -26,12 +26,6 @@ public class GameManager : MonoBehaviour {
 			battleMode = "Car";
 		}
 
-		if(playerId == 1){
-			playerId = 2;
-		} else if(playerId == 2){
-			playerId = 1;
-		}
-
 		m_TestSocket.SettingGameModeByParam ();
 	}
 }

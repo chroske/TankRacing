@@ -76,7 +76,7 @@ public class TestSocketIO : MonoBehaviour
 		
 		// メッセージ受信を追加
 		//socket.On ("S_to_C_message", S_to_C_message);
-		socket.On ("response"+playerId, response_log);
+		socket.On ("response"+m_GameManager.playerId, response_log);
 		
 		StartCoroutine("EmitRoop");
 	}
@@ -124,7 +124,7 @@ public class TestSocketIO : MonoBehaviour
 		for (;;) {
 			JSONObject jsonobj = new JSONObject(JSONObject.Type.OBJECT);
 
-			jsonobj.AddField("player_id", playerId);
+			jsonobj.AddField("player_id", m_GameManager.playerId);
 			jsonobj.AddField("position_x", m_Car.transform.localPosition.x.ToString());
 			jsonobj.AddField("position_y", m_Car.transform.localPosition.y.ToString());
 			jsonobj.AddField("position_z", m_Car.transform.localPosition.z.ToString());
@@ -134,7 +134,7 @@ public class TestSocketIO : MonoBehaviour
 			jsonobj.AddField("rotate_z", m_Car.transform.eulerAngles.z.ToString());
 
 
-			socket.Emit("position"+playerId,jsonobj);
+			socket.Emit("position"+m_GameManager.playerId,jsonobj);
 			
 			yield return new WaitForSeconds(0.016f);
 		}

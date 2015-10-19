@@ -43,17 +43,9 @@ public class TestSocketIO : MonoBehaviour
 	private SocketIOComponent socket;
 	private float gameStartTime;
 	private float moveTime = 0.016f;
+	
 
-	public void awake(){
-
-
-	}
-
-	public void Start() 
-	{
-
-		m_GameManager = gameManager.GetComponent<GameManager>();
-		
+	public void SettingGameModeByParam(){
 		if(m_GameManager.battleMode == "Car"){
 			m_Car = Car;
 			m_Shadow = Shadow;
@@ -61,6 +53,14 @@ public class TestSocketIO : MonoBehaviour
 			m_Car = Shadow;
 			m_Shadow = Car;
 		}
+	}
+
+	public void Start() 
+	{
+
+		m_GameManager = gameManager.GetComponent<GameManager>();
+		
+		SettingGameModeByParam();
 
 
 		gameStartTime = Time.timeSinceLevelLoad;

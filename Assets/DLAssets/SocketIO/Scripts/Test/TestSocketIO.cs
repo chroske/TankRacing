@@ -35,7 +35,6 @@ public class TestSocketIO : MonoBehaviour
 	[SerializeField] private GameObject gameManager;
 	[SerializeField] private GameObject Car;
 	[SerializeField] private GameObject Shadow;
-	[SerializeField] private int playerId;
 
 
 	private GameObject m_Car;

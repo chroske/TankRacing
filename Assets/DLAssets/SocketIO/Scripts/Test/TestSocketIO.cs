@@ -45,6 +45,9 @@ public class TestSocketIO : MonoBehaviour
 	private float emitInterval = 0.3f;//0.016f;
 	private Vector3 prePosition;
 	private Vector3 preRotation;
+
+	private bool moveSim;
+	private Rigidbody shadowRigidbody;
 	
 	
 	public void SettingGameModeByParam(){
@@ -70,7 +73,7 @@ public class TestSocketIO : MonoBehaviour
 		GameObject go = GameObject.Find("SocketIO");
 		socket = go.GetComponent<SocketIOComponent>();
 
-		myRigidbody = GetComponent<Rigidbody>();
+		shadowRigidbody = m_Shadow.GetComponent<Rigidbody>();
 		
 		socket.On("open", TestOpen);
 		socket.On("boop", TestBoop);
@@ -88,8 +91,7 @@ public class TestSocketIO : MonoBehaviour
 		
 	}
 	
-	private bool moveSim;
-	private Rigidbody myRigidbody;
+
 	
 	void FixedUpdate(){
 		if(moveSim){
@@ -100,7 +102,7 @@ public class TestSocketIO : MonoBehaviour
 			// 移動先から速度を逆算
 			Vector3 move = (Vector3.Lerp(m_Shadow.transform.position, position, t) - m_Shadow.transform.position) / Time.fixedDeltaTime;
 			// 速度を設定
-			myRigidbody.velocity = move;
+			shadowRigidbody.velocity = move;
 			
 			// 回転
 			//m_Shadow.transform.rotation = Quaternion.Slerp(m_Shadow.transform.rotation, rotation, t);

@@ -268,7 +268,7 @@ public class CarDriveController : MonoBehaviour
 			}
 		}
 	}
-
+	
 	private void FixedUpdate()
 	{
 		if(m_GameManager.battleMode == "Car"){

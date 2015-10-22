@@ -35,8 +35,8 @@ public class TestSocketIO : MonoBehaviour
 	[SerializeField] private GameObject gameManager;
 	[SerializeField] private GameObject Car;
 	[SerializeField] private GameObject Shadow;
-
-
+	
+	
 	private GameObject m_Car;
 	private GameObject m_Shadow;
 	private GameManager m_GameManager;
@@ -46,7 +46,7 @@ public class TestSocketIO : MonoBehaviour
 	private Vector3 prePosition;
 	private Vector3 preRotation;
 	
-
+	
 	public void SettingGameModeByParam(){
 		if(m_GameManager.battleMode == "Car"){
 			m_Car = Car;
@@ -56,19 +56,21 @@ public class TestSocketIO : MonoBehaviour
 			m_Shadow = Car;
 		}
 	}
-
+	
 	public void Start() 
 	{
-
+		
 		m_GameManager = gameManager.GetComponent<GameManager>();
 		
 		SettingGameModeByParam();
-
-
+		
+		
 		gameStartTime = Time.timeSinceLevelLoad;
-
+		
 		GameObject go = GameObject.Find("SocketIO");
 		socket = go.GetComponent<SocketIOComponent>();
+
+		myRigidbody = GetComponent<Rigidbody>();
 		
 		socket.On("open", TestOpen);
 		socket.On("boop", TestBoop);
@@ -81,27 +83,48 @@ public class TestSocketIO : MonoBehaviour
 		
 		StartCoroutine("EmitRoop");
 	}
-
+	
 	void Update(){
 		
 	}
-
+	
+	private bool moveSim;
+	private Rigidbody myRigidbody;
+	
+	void FixedUpdate(){
+		if(moveSim){
+			moveSim = false;
+			
+			// データは1/Network.sendRate間隔で送信されてくる。このうちの経過時間分が内分する値
+			float t = emitInterval;
+			// 移動先から速度を逆算
+			Vector3 move = (Vector3.Lerp(m_Shadow.transform.position, position, t) - m_Shadow.transform.position) / Time.fixedDeltaTime;
+			// 速度を設定
+			myRigidbody.velocity = move;
+			
+			// 回転
+			//m_Shadow.transform.rotation = Quaternion.Slerp(m_Shadow.transform.rotation, rotation, t);
+		}
+	}
+	
 	// 追加関数
 	public void S_to_C_message( SocketIOEvent e ){
 		Debug.Log("[SocketIO] C_to_S_message received: " + e.name + " " + e.data);
 	}
-
+	
 	public void response_log( SocketIOEvent e ){
 		Debug.Log("[SocketIO] response received: " + e.name + " " + e.data);
-
+		
 		JSONObject json = new JSONObject(e.data.ToString());
-
+		
 		SetReceiveTankParam (json);
+		
+		moveSim = true;
 	}
-
-
-
-
+	
+	private Vector3 position;
+	
+	
 	private void SetReceiveTankParam(JSONObject json) {
 		string posX = json.GetField("position_x").str;
 		string posY = json.GetField("position_y").str;
@@ -110,26 +133,28 @@ public class TestSocketIO : MonoBehaviour
 		string rotX = json.GetField("rotate_x").str;
 		string rotY = json.GetField("rotate_y").str;
 		string rotZ = json.GetField("rotate_z").str;
-
+		
 		var diff = Time.timeSinceLevelLoad - gameStartTime;
 		var rate = diff / emitInterval;
-
-		m_Shadow.transform.position = Vector3.Lerp (m_Shadow.transform.position, new Vector3 (float.Parse (posX), float.Parse (posY), float.Parse (posZ)), rate);
-		m_Shadow.transform.rotation = Quaternion.Slerp(m_Shadow.transform.rotation, Quaternion.Euler(new Vector3 (float.Parse(rotX), float.Parse(rotY), float.Parse(rotZ))), rate);
 		
-		//Shadow.transform.position = new Vector3( float.Parse(posX), float.Parse(posY), float.Parse(posZ));
-		//m_Shadow.transform.eulerAngles = new Vector3 (float.Parse(rotX), float.Parse(rotY), float.Parse(rotZ));
+		//m_Shadow.transform.position = Vector3.Lerp (m_Shadow.transform.position, new Vector3 (float.Parse (posX), float.Parse (posY), float.Parse (posZ)), rate);
+		//m_Shadow.transform.rotation = Quaternion.Slerp(m_Shadow.transform.rotation, Quaternion.Euler(new Vector3 (float.Parse(rotX), float.Parse(rotY), float.Parse(rotZ))), rate);
+		
+		position = new Vector3 (float.Parse (posX), float.Parse (posY), float.Parse (posZ));
+		
+		m_Shadow.transform.position = new Vector3( float.Parse(posX), float.Parse(posY), float.Parse(posZ));
+		m_Shadow.transform.eulerAngles = new Vector3 (float.Parse(rotX), float.Parse(rotY), float.Parse(rotZ));
 	}
-
-
+	
+	
 	
 	private IEnumerator EmitRoop() {
 		for (;;) {
 			if(m_Car.transform.position != prePosition || m_Car.transform.eulerAngles != preRotation){
 				prePosition = m_Car.transform.position;
 				preRotation = m_Car.transform.eulerAngles;
-
-
+				
+				
 				JSONObject jsonobj = new JSONObject(JSONObject.Type.OBJECT);
 				
 				jsonobj.AddField("player_id", m_GameManager.playerId);
@@ -140,10 +165,10 @@ public class TestSocketIO : MonoBehaviour
 				jsonobj.AddField("rotate_x", m_Car.transform.eulerAngles.x.ToString());
 				jsonobj.AddField("rotate_y", m_Car.transform.eulerAngles.y.ToString());
 				jsonobj.AddField("rotate_z", m_Car.transform.eulerAngles.z.ToString());
-
+				
 				socket.Emit("position"+m_GameManager.playerId,jsonobj);
 			}
-
+			
 			
 			yield return new WaitForSeconds(emitInterval);
 		}

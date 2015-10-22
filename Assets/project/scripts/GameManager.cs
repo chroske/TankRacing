@@ -5,7 +5,8 @@ public class GameManager : MonoBehaviour {
 
 	[SerializeField] private GameObject TestSocket;
 	public string battleMode;
-	public int playerId = 1;
+	public int teamId = 0;
+	public int playerId = 0;
 
 	private TestSocketIO m_TestSocket;
 

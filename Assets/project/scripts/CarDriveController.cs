@@ -21,7 +21,7 @@ public class CarDriveController : MonoBehaviour
 	[SerializeField] private float m_BrakeTorque;
 	[SerializeField] private GameObject steerObj;
 	[SerializeField] private GameObject body;
-	[SerializeField] private GameObject cameraArm;
+	//[SerializeField] private GameObject cameraArm;
 	[SerializeField] private GameObject gameManager;
 	
 	private Quaternion[] m_WheelMeshLocalRotations;
@@ -320,7 +320,7 @@ public class CarDriveController : MonoBehaviour
 			m_WheelColliders[1].steerAngle = Mathf.Clamp(m_SteerAngle, 0, wheelSteerAngle * 0.4f);
 		}
 		//ドリフト演出のためcameraを見た目のみ傾ける
-		DriftRotateCamera(wheelSteerAngle);
+		//DriftRotateCamera(wheelSteerAngle);
 	}
 
 	private void DisplayUnTouchingEvent(){
@@ -330,22 +330,22 @@ public class CarDriveController : MonoBehaviour
 			m_WheelColliders[i].brakeTorque = m_BrakeTorque;
 		}
 		
-		ReturnDefaultCameraAngle();
+		//ReturnDefaultCameraAngle();
 	}
 
-	private void DriftRotateCamera(float wheelSteerAngle){
-		float angle = Mathf.LerpAngle (cameraArm.transform.localEulerAngles.y, -wheelSteerAngle*0.2f, Time.deltaTime*10);
-		cameraArm.transform.localEulerAngles = new Vector3 (0, angle, 0);
-	}
-
-
-	private void ReturnDefaultCameraAngle(){
-		//machin rotate reset
-		if(cameraArm.transform.localEulerAngles.y != 0){
-			float angle = Mathf.LerpAngle (cameraArm.transform.localEulerAngles.y, 0, Time.deltaTime*5);
-			cameraArm.transform.localEulerAngles = new Vector3 (0, angle, 0);
-		}
-	}
+//	private void DriftRotateCamera(float wheelSteerAngle){
+//		float angle = Mathf.LerpAngle (cameraArm.transform.localEulerAngles.y, -wheelSteerAngle*0.2f, Time.deltaTime*10);
+//		cameraArm.transform.localEulerAngles = new Vector3 (0, angle, 0);
+//	}
+//
+//
+//	private void ReturnDefaultCameraAngle(){
+//		//machin rotate reset
+//		if(cameraArm.transform.localEulerAngles.y != 0){
+//			float angle = Mathf.LerpAngle (cameraArm.transform.localEulerAngles.y, 0, Time.deltaTime*5);
+//			cameraArm.transform.localEulerAngles = new Vector3 (0, angle, 0);
+//		}
+//	}
 
 	private void ReturnDefaultSteerAngle(){
 		for (int i = 0; i < 2; i++) {

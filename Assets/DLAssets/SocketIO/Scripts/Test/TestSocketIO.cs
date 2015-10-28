@@ -35,11 +35,15 @@ public class TestSocketIO : MonoBehaviour
 	[SerializeField] private GameObject gameManager;
 	[SerializeField] private GameObject Car;
 	[SerializeField] private GameObject Shadow;
+	[SerializeField] private GameObject DummySteer;
+	[SerializeField] private GameObject SteerController;
 	
 	
 	private GameObject m_Car;
 	private GameObject m_Shadow;
 	private GameManager m_GameManager;
+	private DummySteer m_DummySteer;
+	private SteerController m_SteerController;
 	private SocketIOComponent socket;
 	private float gameStartTime;
 	private float emitInterval = 0.3f;//0.016f;
@@ -64,6 +68,8 @@ public class TestSocketIO : MonoBehaviour
 	{
 		
 		m_GameManager = gameManager.GetComponent<GameManager>();
+		m_DummySteer = DummySteer.GetComponent<DummySteer>();
+		m_SteerController = SteerController.GetComponent<SteerController>();
 		
 		SettingGameModeByParam();
 		
@@ -102,7 +108,7 @@ public class TestSocketIO : MonoBehaviour
 			// 移動先から速度を逆算
 			Vector3 move = (Vector3.Lerp(m_Shadow.transform.position, position, t) - m_Shadow.transform.position) / Time.fixedDeltaTime;
 			// 速度を設定
-			shadowRigidbody.velocity = move;
+			//shadowRigidbody.velocity = move;
 			
 			// 回転
 			//m_Shadow.transform.rotation = Quaternion.Slerp(m_Shadow.transform.rotation, rotation, t);
@@ -135,6 +141,9 @@ public class TestSocketIO : MonoBehaviour
 		string rotX = json.GetField("rotate_x").str;
 		string rotY = json.GetField("rotate_y").str;
 		string rotZ = json.GetField("rotate_z").str;
+
+		string steerAngle = json.GetField("steerAngle").str;
+		string valConDistance = json.GetField("valConDistance").str;
 		
 		var diff = Time.timeSinceLevelLoad - gameStartTime;
 		var rate = diff / emitInterval;
@@ -146,6 +155,10 @@ public class TestSocketIO : MonoBehaviour
 		
 		m_Shadow.transform.position = new Vector3( float.Parse(posX), float.Parse(posY), float.Parse(posZ));
 		m_Shadow.transform.eulerAngles = new Vector3 (float.Parse(rotX), float.Parse(rotY), float.Parse(rotZ));
+
+		m_DummySteer.steerAngle = float.Parse(steerAngle);
+		m_DummySteer.valConDistance = float.Parse(valConDistance);
+
 	}
 	
 	
@@ -167,6 +180,9 @@ public class TestSocketIO : MonoBehaviour
 				jsonobj.AddField("rotate_x", m_Car.transform.eulerAngles.x.ToString());
 				jsonobj.AddField("rotate_y", m_Car.transform.eulerAngles.y.ToString());
 				jsonobj.AddField("rotate_z", m_Car.transform.eulerAngles.z.ToString());
+
+				jsonobj.AddField("steerAngle", m_SteerController.steerAngle.ToString());
+				jsonobj.AddField("valConDistance", m_SteerController.valConDistance.ToString());
 				
 				socket.Emit("position"+m_GameManager.playerId,jsonobj);
 			}

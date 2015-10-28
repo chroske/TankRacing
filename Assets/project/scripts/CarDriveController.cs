@@ -314,6 +314,9 @@ public class CarDriveController : MonoBehaviour
 			wheelSteerAngle = m_DummySteer.steerAngle;
 			valConDistance = m_DummySteer.valConDistance;
 			maxDistance = m_DummySteer.maxDistance;
+			if(wheelSteerAngle != 0){
+				Debug.Log("");
+			}
 		}
 
 		float steering = Mathf.Clamp(wheelSteerAngle, -1, 1);

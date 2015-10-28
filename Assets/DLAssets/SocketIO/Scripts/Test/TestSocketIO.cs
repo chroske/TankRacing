@@ -46,7 +46,7 @@ public class TestSocketIO : MonoBehaviour
 	private SteerController m_SteerController;
 	private SocketIOComponent socket;
 	private float gameStartTime;
-	private float emitInterval = 0.3f;//0.016f;
+	private float emitInterval = 0.5f;//0.016f;
 	private Vector3 prePosition;
 	private Vector3 preRotation;
 
@@ -151,7 +151,7 @@ public class TestSocketIO : MonoBehaviour
 		//m_Shadow.transform.position = Vector3.Lerp (m_Shadow.transform.position, new Vector3 (float.Parse (posX), float.Parse (posY), float.Parse (posZ)), rate);
 		//m_Shadow.transform.rotation = Quaternion.Slerp(m_Shadow.transform.rotation, Quaternion.Euler(new Vector3 (float.Parse(rotX), float.Parse(rotY), float.Parse(rotZ))), rate);
 		
-		position = new Vector3 (float.Parse (posX), float.Parse (posY), float.Parse (posZ));
+		//position = new Vector3 (float.Parse (posX), float.Parse (posY), float.Parse (posZ));
 		
 		m_Shadow.transform.position = new Vector3( float.Parse(posX), float.Parse(posY), float.Parse(posZ));
 		m_Shadow.transform.eulerAngles = new Vector3 (float.Parse(rotX), float.Parse(rotY), float.Parse(rotZ));

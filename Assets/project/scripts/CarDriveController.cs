@@ -282,8 +282,56 @@ public class CarDriveController : MonoBehaviour
 	private void FixedUpdate()
 	{
 		if(m_GameManager.battleMode == "Car"){
-			SwipeSteering();
+			if (dummySteer != null) {
+				dummySteerDrive ();
+			} else if(steerObj != null){
+				SwipeSteering();
+			}
+
 		}
+
+
+	}
+
+	private void dummySteerDrive(){
+		float DummyWheelSteerAngle = m_DummySteer.steerAngle;
+		float DummyValConDistance = m_DummySteer.valConDistance;
+		float DummyMaxDistance = m_DummySteer.maxDistance;
+
+		//  引っ張られてない状態だったらブレーキ
+		if(DummyWheelSteerAngle == 0 || DummyValConDistance == 0){
+			DisplayUnTouchingEvent();
+		} else{
+			float steering = Mathf.Clamp(DummyWheelSteerAngle, -1, 1);
+			float m_SteerAngle = steering*m_MaximumSteerAngle;
+			
+			for (int i = 0; i < 4; i++)
+			{
+				m_WheelColliders[i].brakeTorque = 0;
+			}
+			
+			//トルク調節
+			m_CurrentTorque = (m_FullTorqueOverAllWheels - (m_TractionControl*m_FullTorqueOverAllWheels)) * Mathf.Clamp(DummyValConDistance,0,DummyMaxDistance) / DummyMaxDistance;
+			
+			//drive
+			Move(1, 1, 1, 0f);
+			
+			//steering
+			if (DummyWheelSteerAngle < 0) {
+				transform.Rotate (new Vector3 (0, DummyWheelSteerAngle * 0.5f, 0) * Time.deltaTime);
+				
+				m_WheelColliders[0].steerAngle = Mathf.Clamp(m_SteerAngle, DummyWheelSteerAngle * 0.4f, 0);
+				m_WheelColliders[1].steerAngle = Mathf.Clamp(m_SteerAngle, DummyWheelSteerAngle * 0.4f, 0);
+			} else if (DummyWheelSteerAngle > 0) {
+				transform.Rotate (new Vector3 (0, DummyWheelSteerAngle * 0.5f, 0) * Time.deltaTime);
+				
+				m_WheelColliders[0].steerAngle = Mathf.Clamp(m_SteerAngle, 0, DummyWheelSteerAngle * 0.4f);
+				m_WheelColliders[1].steerAngle = Mathf.Clamp(m_SteerAngle, 0, DummyWheelSteerAngle * 0.4f);
+			}
+		}
+
+		
+
 	}
 	
 	private void SwipeSteering(){
@@ -299,25 +347,11 @@ public class CarDriveController : MonoBehaviour
 		}
 	}
 
-	private void DisplayTouchingEvent(){
-		float wheelSteerAngle = 0;
-		float valConDistance = 0;
-		float maxDistance = 0;
 
-		if(steerObj != null){
-			wheelSteerAngle = m_SteerController.steerAngle;
-			valConDistance = m_SteerController.valConDistance;
-			maxDistance = m_SteerController.maxDistance;
-		}
-		
-		if(dummySteer != null){
-			wheelSteerAngle = m_DummySteer.steerAngle;
-			valConDistance = m_DummySteer.valConDistance;
-			maxDistance = m_DummySteer.maxDistance;
-			if(wheelSteerAngle != 0){
-				Debug.Log("");
-			}
-		}
+	private void DisplayTouchingEvent(){
+		float wheelSteerAngle = m_SteerController.steerAngle;
+		float valConDistance = m_SteerController.valConDistance;
+		float maxDistance = m_SteerController.maxDistance;
 
 		float steering = Mathf.Clamp(wheelSteerAngle, -1, 1);
 		float m_SteerAngle = steering*m_MaximumSteerAngle;

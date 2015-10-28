@@ -23,6 +23,7 @@ public class CarDriveController : MonoBehaviour
 	[SerializeField] private GameObject body;
 	//[SerializeField] private GameObject cameraArm;
 	[SerializeField] private GameObject gameManager;
+	[SerializeField] private GameObject dummySteer;
 	
 	private Quaternion[] m_WheelMeshLocalRotations;
 	private Vector3 m_Prevpos, m_Pos;
@@ -35,6 +36,7 @@ public class CarDriveController : MonoBehaviour
 	private const float k_ReversingThreshold = 0.01f;
 	private GameManager m_GameManager;
 	private SteerController m_SteerController;
+	private DummySteer m_DummySteer;
 	
 	public bool Skidding { get; private set; }
 	public float BrakeInput { get; private set; }
@@ -50,7 +52,15 @@ public class CarDriveController : MonoBehaviour
 	private void Start()
 	{
 		m_GameManager = gameManager.GetComponent<GameManager>();
-		m_SteerController = steerObj.GetComponent<SteerController>();
+
+		if(steerObj != null){
+			m_SteerController = steerObj.GetComponent<SteerController>();
+		}
+
+		if(dummySteer != null){
+			m_DummySteer = dummySteer.GetComponent<DummySteer>();
+		}
+
 
 		m_WheelColliders[0].attachedRigidbody.centerOfMass = m_CentreOfMassOffset;
 		
@@ -290,9 +300,22 @@ public class CarDriveController : MonoBehaviour
 	}
 
 	private void DisplayTouchingEvent(){
-		float wheelSteerAngle = m_SteerController.steerAngle;
-		float valConDistance = m_SteerController.valConDistance;
-		float maxDistance = m_SteerController.maxDistance;
+		float wheelSteerAngle = 0;
+		float valConDistance = 0;
+		float maxDistance = 0;
+
+		if(steerObj != null){
+			wheelSteerAngle = m_SteerController.steerAngle;
+			valConDistance = m_SteerController.valConDistance;
+			maxDistance = m_SteerController.maxDistance;
+		}
+		
+		if(dummySteer != null){
+			wheelSteerAngle = m_DummySteer.steerAngle;
+			valConDistance = m_DummySteer.valConDistance;
+			maxDistance = m_DummySteer.maxDistance;
+		}
+
 		float steering = Mathf.Clamp(wheelSteerAngle, -1, 1);
 		float m_SteerAngle = steering*m_MaximumSteerAngle;
 

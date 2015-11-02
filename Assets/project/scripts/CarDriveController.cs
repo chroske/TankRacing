@@ -24,6 +24,7 @@ public class CarDriveController : MonoBehaviour
 	//[SerializeField] private GameObject cameraArm;
 	[SerializeField] private GameObject gameManager;
 	[SerializeField] private GameObject dummySteer;
+	[SerializeField] private int steerPowor;
 	
 	private Quaternion[] m_WheelMeshLocalRotations;
 	private Vector3 m_Prevpos, m_Pos;
@@ -287,10 +288,7 @@ public class CarDriveController : MonoBehaviour
 			} else if(steerObj != null){
 				SwipeSteering();
 			}
-
 		}
-
-
 	}
 
 	private void dummySteerDrive(){
@@ -369,12 +367,12 @@ public class CarDriveController : MonoBehaviour
 		
 		//steering
 		if (wheelSteerAngle < 0) {
-			transform.Rotate (new Vector3 (0, wheelSteerAngle * 0.5f, 0) * Time.deltaTime);
+			transform.Rotate (new Vector3 (0, wheelSteerAngle * 0.1f * steerPowor, 0) * Time.deltaTime);
 			
 			m_WheelColliders[0].steerAngle = Mathf.Clamp(m_SteerAngle, wheelSteerAngle * 0.4f, 0);
 			m_WheelColliders[1].steerAngle = Mathf.Clamp(m_SteerAngle, wheelSteerAngle * 0.4f, 0);
 		} else if (wheelSteerAngle > 0) {
-			transform.Rotate (new Vector3 (0, wheelSteerAngle * 0.5f, 0) * Time.deltaTime);
+			transform.Rotate (new Vector3 (0, wheelSteerAngle * 0.1f * steerPowor, 0) * Time.deltaTime);
 			
 			m_WheelColliders[0].steerAngle = Mathf.Clamp(m_SteerAngle, 0, wheelSteerAngle * 0.4f);
 			m_WheelColliders[1].steerAngle = Mathf.Clamp(m_SteerAngle, 0, wheelSteerAngle * 0.4f);

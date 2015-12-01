@@ -46,7 +46,9 @@ public class TestSocketIO : MonoBehaviour
 	private SteerController m_SteerController;
 	private SocketIOComponent socket;
 	private float gameStartTime;
-	private float emitInterval = 0.2f;//0.016f;
+	private float emitInterval = 0.3f;//0.016f;
+	private float rate;
+	private float diff;
 	private Vector3 prePosition;
 	private Vector3 preRotation;
 
@@ -71,7 +73,7 @@ public class TestSocketIO : MonoBehaviour
 		SettingGameModeByParam();
 		
 		
-		gameStartTime = Time.timeSinceLevelLoad;
+
 		
 		GameObject go = GameObject.Find("SocketIO");
 		socket = go.GetComponent<SocketIOComponent>();
@@ -84,29 +86,31 @@ public class TestSocketIO : MonoBehaviour
 		// メッセージ受信を追加
 		//socket.On ("S_to_C_message", S_to_C_message);
 		socket.On ("response"+m_GameManager.playerId, response_log);
-		
+
 		StartCoroutine("EmitRoop");
 	}
 	
 	void Update(){
-		
+		diff = Time.timeSinceLevelLoad - gameStartTime;
+		rate = diff; /* / emitInterval*/
+		//Debug.Log (rate);
 	}
-
 	
 	// 追加関数
 	public void S_to_C_message( SocketIOEvent e ){
-		Debug.Log("[SocketIO] C_to_S_message received: " + e.name + " " + e.data);
+		//Debug.Log("[SocketIO] C_to_S_message received: " + e.name + " " + e.data);
 	}
 	
 	public void response_log( SocketIOEvent e ){
-		Debug.Log("[SocketIO] response received: " + e.name + " " + e.data);
-		
+		//Debug.Log("[SocketIO] response received: " + e.name + " " + e.data);
+
 		JSONObject json = new JSONObject(e.data.ToString());
-		
+
+		gameStartTime = Time.timeSinceLevelLoad;
 		SetReceiveTankParam (json);
 	}
 
-	
+	bool firstGetParam = false;
 	private void SetReceiveTankParam(JSONObject json) {
 		string posX = json.GetField("position_x").str;
 		string posY = json.GetField("position_y").str;
@@ -119,15 +123,38 @@ public class TestSocketIO : MonoBehaviour
 		string steerAngle = json.GetField("steerAngle").str;
 		string valConDistance = json.GetField("valConDistance").str;
 		
-		//var diff = Time.timeSinceLevelLoad - gameStartTime;
+		//float diff = ;
 		//var rate = diff / emitInterval;
-		
-		//m_Shadow.transform.position = Vector3.Lerp (m_Shadow.transform.position, new Vector3 (float.Parse (posX), float.Parse (posY), float.Parse (posZ)), rate);
+
+//		float CarPositionLagDistance = Vector3.Distance (m_Shadow.transform.position, new Vector3 (float.Parse (posX), float.Parse (posY), float.Parse (posZ)));
+//		m_Shadow.transform.position = Vector3.Lerp (m_Shadow.transform.position, new Vector3 (float.Parse (posX), float.Parse (posY), float.Parse (posZ)), 0.0002f);
 		//m_Shadow.transform.rotation = Quaternion.Slerp(m_Shadow.transform.rotation, Quaternion.Euler(new Vector3 (float.Parse(rotX), float.Parse(rotY), float.Parse(rotZ))), rate);
 
-		m_Shadow.transform.position = new Vector3( float.Parse(posX), float.Parse(posY), float.Parse(posZ));
-		m_Shadow.transform.eulerAngles = new Vector3 (float.Parse(rotX), float.Parse(rotY), float.Parse(rotZ));
+		
+		
+		if (firstGetParam == false) {
+			m_Shadow.transform.position = new Vector3 (float.Parse (posX), float.Parse (posY), float.Parse (posZ));
+			//m_Shadow.transform.eulerAngles = new Vector3 (float.Parse(rotX), float.Parse(rotY), float.Parse(rotZ));
 
+			iTween.LookTo(m_Shadow, new Vector3 (90, 90, 90), 3);
+			firstGetParam = true;
+		} else {
+			float CarPositionLagDistance = Vector3.Distance (m_Shadow.transform.position, new Vector3 (float.Parse (posX), float.Parse (posY), float.Parse (posZ)));
+			float moveTime = 5.0f-(CarPositionLagDistance/2);
+			if(moveTime < 3f){
+				moveTime = 3f;
+			}
+
+			iTween.MoveTo(m_Shadow,  iTween.Hash(
+				"position", new Vector3 (float.Parse (posX), float.Parse (posY), float.Parse (posZ)),
+				"time", moveTime+moveTime*rate
+			));
+			//iTween.LookTo(m_Shadow, new Vector3 (m_Shadow.transform.eulerAngles.x, float.Parse(rotY), m_Shadow.transform.eulerAngles.z), 0);
+			//m_Shadow.transform.eulerAngles = new Vector3 (float.Parse(rotX), float.Parse(rotY), float.Parse(rotZ));
+			//Debug.Log (moveTime*rate);
+		}
+
+		//m_Shadow.transform.eulerAngles = new Vector3 (float.Parse(rotX), float.Parse(rotY), float.Parse(rotZ));
 
 		m_DummySteer.steerAngle = float.Parse(steerAngle);
 		m_DummySteer.valConDistance = float.Parse(valConDistance);

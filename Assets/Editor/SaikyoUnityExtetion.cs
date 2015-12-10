@@ -34,10 +34,10 @@ public class SaikyoUnityExtetion : EditorWindow
 
 	private List<Dictionary<string,string>> HomeTimeLineList = new List<Dictionary<string,string>>();
 
-	private string oauth_consumer_key = "xhRaULqKMOdbYIgtYUyHwVXjn";
-	private string oauth_consumer_secret  = "T712U3kcBMNndx6VLpbBx5Vkb2mh5vyOMYfmzUGUDkYeNUJEzh";
-	private string oauth_token = "71981472-aUOUq61ZxI72XoWT1Sw8KSpEwOG4dZwCtrAhaH3w9";
-	private string oauth_token_secret = "LQ7b99yShWbAoP27746W64vzsTOhDxuy9ZWzRQ3NvJiBZ";
+	private string oauth_consumer_key = "***********";
+	private string oauth_consumer_secret  = "***********";
+	private string oauth_token = "***********";
+	private string oauth_token_secret = "***********";
 	private string oauth_signature_method = "HMAC-SHA1";
 	private string oauth_nonce = Convert.ToBase64String(new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString()));
 	private string oauth_version = "1.0";

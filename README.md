@@ -1,4 +1,4 @@
-# GYRO-FPS
+# TankRacing
 
 Network multiplay tank racing game.
 
